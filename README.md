@@ -1,7 +1,7 @@
 
 # Introduction
 The goal of this project is to provide a easy way to run selenium
-tests without the need of a GUI
+tests just with some webpage and JSON knowledge
 
 # What does it do ?
 using a simple json configuration file you can run tests for your webpage.
