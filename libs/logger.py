@@ -18,7 +18,7 @@ class TestLogger(TestUtils):
         if not os.path.exists(file) or over:
             open(file, 'w+')
         log = open(file,'a')
-        state = self.stamp(log=True)+" | "+file+" | "+msg
+        state = "{} | {} | {}".format(self.stamp(log=True), file, msg)
         print(msg)
         log.write(state+"\n")
         log.close()

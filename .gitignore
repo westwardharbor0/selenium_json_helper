@@ -105,4 +105,3 @@ venv.bak/
 
 config*
 !libs/config.py
-main.py

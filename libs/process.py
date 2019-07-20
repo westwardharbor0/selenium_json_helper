@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import random
 
 from .consoler import TestConsole
 from .logger import TestLogger
@@ -17,6 +18,7 @@ class TestProcess(TestLogger, TestConsole):
         self.folder = self.base+self.stamp()
         self.mfolder(self.folder)
         try:
+            self.driver.delete_all_cookies()
             for test in self.testing:
                 self.start_env()
                 #load all test and run them
@@ -58,6 +60,8 @@ class TestProcess(TestLogger, TestConsole):
             self.type_path(stage, test)
         elif typ == "wait":
             self.set_wait(stage, test)
+        elif typ == "random_wait":
+            self.set_wait(stage, test)
         else:
             self.raise_msg("Not know type of stage yet {}".format(typ))
         time.sleep(5)
@@ -88,7 +92,15 @@ class TestProcess(TestLogger, TestConsole):
     #__________________________________
     def set_wait(self, stage, test, log=True):
         cont = stage['continue_on']
-        if 'time' in cont:
+        if 'max_time' in cont:
+            rand = random.randint(1, cont['max_time']);
+
+            if 'min_time' in cont: 
+                rand = random.randint(cont['min_time'], cont['max_time']) 
+            
+            time.sleep(float(rand))
+            self.progress_log('___Waiting random {}s'.format(rand))
+        elif 'time' in cont:
             time.sleep(float(cont['time']))
             self.progress_log('___Waiting {}s'.format(cont['time']))
         elif 'element' in cont:
@@ -118,8 +130,8 @@ class TestProcess(TestLogger, TestConsole):
         self.make_screenshot(stage, test)
 
     def make_screenshot(self, stage, test):
-        self.progress_log('___Taking screenshot')
         if test['screenshot']:
+            self.progress_log('___Taking screenshot')
             folder = self.folder+"/"+test['folder']
             self.mfolder(folder)
             folder += "/screens"
@@ -141,12 +153,17 @@ class TestProcess(TestLogger, TestConsole):
         self.make_screenshot(stage, test)
 
     def type_path(self, stage, test):
-        self.progress_log('___Path action {}'.format(stage['action']))
-        self.make_screenshot(stage, test)
-        element = self.driver.find_element_by_xpath(stage['selector'])
-        if stage['action'] == 'click':
-            element.click()
-        elif stage['action'] == 'input':
-            element.send_keys(stage['value'])
-        else:
-            self.raise_msg('Unknown action on path')
+        try:
+            self.progress_log('___Path action {}'.format(stage['action']))
+            self.make_screenshot(stage, test)
+            element = self.driver.find_element_by_class_name(stage['selector'])
+            if stage['action'] == 'click':
+                element.click()
+            elif stage['action'] == 'input':
+                element.send_keys(stage['value'])
+            else:
+                self.raise_msg('Unknown action on path')
+        except Exception as ex:
+            self.error_log("Path doesnt exitsts")
+            self.error_log(ex)
+            self.raise_msg('Unknown path')

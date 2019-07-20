@@ -60,7 +60,15 @@ all the steps and attributes of your test
     "screens":"String // Folder for screen storing",
     "logs":"String // Folder for logs output"
   },
-  "tests":["Array of objects // Array containing runs - more in next example"]
+  "tests":["Array of objects // Array containing runs - more in next example"],
+  "tor": {
+    "port": "Integer // port to connect to TOR service"
+  },
+  "random_agent": "Boolean // if you want to use random agents in test",
+  "screen_size": {
+    "width": "Integer // width of the screen in tests",
+    "height": "Integer // Height of the screen in tests"
+  },
 }
 ```
 ## Run atrributes
@@ -149,6 +157,18 @@ all the steps and attributes of your test
       }
     },
     ```
+### random_wait
+- user `random_wait` when you need to wait a random amount of time 
+- after `random_wait` you define max and min time of the random time
+```json
+{
+  "type": "random_wait",
+  "continue_on": {
+      "min_time": 20,
+      "max_time": 60
+  }
+}
+```
 
 ### path
 - use `path` when you need a more complicated XPath selector for item selection
@@ -208,9 +228,7 @@ all the steps and attributes of your test
 
 # Next steps
 - run in Docker 
-- resolution for test enviroment 
-- random Agents
-- Tor support
+- have idea ? contact me or create issue :)
 
 ### Used stuff
   https://chromedriver.storage.googleapis.com/index.html?path=2.44/
